@@ -13,9 +13,6 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ env.PHP_VERSION }}
-  deploy:
-    runs-on: self-hosted
-    steps:
       - name: 'Deploy to Azure VM'
         uses: appleboy/scp-action@v0.1.4
         with:
