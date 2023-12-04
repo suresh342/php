@@ -52,7 +52,7 @@ jobs:
          path: release.zip
   deploy:
     runs-on: self-hosted
-    needs: build
+    #needs: deploy
     steps: 
       - name: Run SCP Action
         uses: appleboy/scp-action@v0.1.4
