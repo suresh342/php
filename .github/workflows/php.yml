@@ -75,9 +75,9 @@ jobs:
         
       - name: 'Deploy to Azure VM'
         #id: deploy-to-webapp       
-        #uses:  appleboy/ssh-action@master
+        uses:  appleboy/ssh-action@master
         #uses: easingthemes/ssh-deploy@main
-        uses: appleboy/scp-action@v0.1.4
+        #uses: appleboy/scp-action@v0.1.4
         
         with:          
           host : ${{secrets.HOST}}
