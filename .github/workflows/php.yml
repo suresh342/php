@@ -16,8 +16,11 @@ jobs:
 
       - name: Setup PHP        
         uses: actions/checkout@v2
+        
+      - name: Use PHP 8.2.x
+        uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ env.PHP_VERSION }}
+          php-version: 8.2
 
       - name: Check if composer.json exists
         id: check_files
@@ -43,7 +46,6 @@ jobs:
         run: composer validate --no-check-publish && composer install --prefer-dist --no-progress
       - name: Update Composer
         run: composer self-update
-
       - name: Install Dependencies
         run: composer update
       - name: Zip artifact for deployment
