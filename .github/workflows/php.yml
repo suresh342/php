@@ -50,10 +50,12 @@ jobs:
         with:
          name: php-app
          path: release.zip
+         
+
   deploy:
-    runs-on: self-hosted
-    #needs: deploy
-    steps: 
+      runs-on: self-hosted
+      #needs: build
+      steps: 
       - name: Run SCP Action
         uses: appleboy/scp-action@v0.1.4
       - name: Download artifact from build job
