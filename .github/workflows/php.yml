@@ -1,25 +1,83 @@
-name: Deploy PHP-app-VM
+name: Deploy into VM
+
+env: 
+  PHP_VERSION: '8.x'        
+  CI : false
 on:
   push:
     branches:
       - main
+
 jobs:
-  deploy:
+  build:
     runs-on: self-hosted
-    steps:
-      - name: Checkout code
+
+    steps:   
+
+      - name: Setup PHP        
         uses: actions/checkout@v2
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ env.PHP_VERSION }}
-      - name: 'Deploy to Azure VM'
-        uses: appleboy/scp-action@master
+
+      - name: Check if composer.json exists
+        id: check_files
+        uses: andstor/file-existence-action@v2
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          port: ${{ secrets.PORT }}
-          password: ${{ secrets.PASS }}
-          source: './php-app-deploy'
-          target: '/var/www/html/Prod2'
+          files: 'composer.json'
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: |
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      - name: Set up dependency caching for faster installs
+        uses: actions/cache@v3
+        if: steps.check_files.outputs.files_exists == 'true'
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+      - name: Run composer install if composer.json exists
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: composer validate --no-check-publish && composer install --prefer-dist --no-progress
+      - name: Zip artifact for deployment
+        run: zip release.zip ./* -r
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+          name: php-app
+          path: release.zip
+  deploy:
+    runs-on: self-hosted
+    needs: build
+           
+    steps:
+              
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: php-app          
+          #path: "php-app-dep/"
+          
+      - name: unzip artifact for deployment
+        run: unzip release.zip 
+        
+      - name: 'Deploy to Azure VM'
+        #id: deploy-to-webapp       
+        #uses:  appleboy/ssh-action@master
+        #uses: easingthemes/ssh-deploy@main
+        uses: appleboy/scp-action@v0.1.4
+        
+        with:          
+          host : ${{secrets.HOST}}
+          username : ${{secrets.USER}}          
+          port : ${{secrets.PORT}}
+          password : ${{secrets.PASS}}          
+          source : ./
+          target: /var/www/html/Prod2
           strip_components: 1
+          #script: whoami|
+           #whoami
+           #ls -al
+           #pwd
