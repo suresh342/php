@@ -52,13 +52,13 @@ jobs:
          path: release.zip
   deploy:
     runs-on: self-hosted
-    #needs: build
+    needs: build
     steps:    
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
           name: php-app          
-          #path: "php-app-dep/"
+          path: release.zip
           
       - name: Install zip
         run: |
