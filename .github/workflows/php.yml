@@ -1,33 +1,28 @@
-name: Build and Deploy PHP App to Azure VM
+name: Deploy into VM
 on:
   push:
     branches:
       - main
- 
 jobs:
   build:
     runs-on: self-hosted
-    steps:
-      - name: Checkout Repository
+    steps:   
+      - name: Setup PHP        
         uses: actions/checkout@v2
- 
-      - name: Set up PHP
+      - name: Use PHP 8.2.x
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.4'
- 
+          php-version: 8.2
       - name: Check if composer.json exists
         id: check_files
         uses: andstor/file-existence-action@v2
         with:
           files: 'composer.json'
- 
       - name: Get Composer Cache Directory
         id: composer-cache
         if: steps.check_files.outputs.files_exists == 'true'
         run: |
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
- 
       - name: Set up dependency caching for faster installs
         uses: actions/cache@v3
         if: steps.check_files.outputs.files_exists == 'true'
@@ -36,59 +31,63 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
-
-      - name: Composer Install
-        run: |
-          composer validate --no-check-publish && composer install --prefer-dist --no-progress
-      - name: Update Composer Dependencies
-        run: composer update
+      - name: Run composer install if composer.json exists
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: composer validate --no-check-publish && composer install --prefer-dist --no-progress
       - name: Update Composer
         run: composer self-update
       - name: Install Dependencies
         run: composer update
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        
+      - name: Install zip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zip
+      - name: Zip artifact for deployment
+        run: zip release.zip ./* -r
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v3
         with:
-          name: php-app
-          path: ./path/to/your/php-app
- 
+         name: php-app
+         path: release.zip
+         
+
   deploy:
-    runs-on: self-hosted
-    needs: build
-    steps:
+      runs-on: self-hosted
+      steps: 
+      - name: Run SCP Action
+        uses: appleboy/scp-action@v0.1.4
+        #needs: build
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
-          name: php-app
- 
-      - name: Debugging - List files in working directory
-        run: ls -al
- 
-      - name: Debugging - List files in artifact
-        run: unzip -l php-app.zip
- 
-      - name: Unzip artifact for deployment
-        run: unzip php-app.zip
- 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
- 
-      - name: Build and Push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          tags: your_image_name:latest
-          build-args: |
-            # Add any build arguments if needed
- 
+          name: php-app          
+          path: release.zip
+          
+      - name: Install zip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zip
+      - name: Zip files
+        run: zip -r release.zip ./*
+      - name: unzip artifact for deployment
+        run: unzip release.zip 
+        
       - name: 'Deploy to Azure VM'
+        #id: deploy-to-webapp       
+        #uses:  appleboy/ssh-action@master
+        #uses: easingthemes/ssh-deploy@main
         uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{secrets.HOST}}
-          username: ${{secrets.USER}}
-          port: ${{secrets.PORT}}
-          password: ${{secrets.PASS}}
-          source: ./
+        
+        with:          
+          host : ${{secrets.HOST}}
+          username : ${{secrets.USER}}          
+          port : ${{secrets.PORT}}
+          password : ${{secrets.PASS}}          
+          source : ./
           target: /var/www/html/Prod2
           strip_components: 1
+          #script: whoami|
+           #whoami
+           #ls -al
+           #pwd
