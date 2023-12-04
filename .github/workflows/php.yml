@@ -66,6 +66,11 @@ jobs:
         with:
           name: php-app          
           #path: "php-app-dep/"
+      - name: Install zip
+        run: sudo apt-get install zip
+
+      - name: Zip files
+        run: zip -r release.zip ./*
           
       - name: unzip artifact for deployment
         run: unzip release.zip 
