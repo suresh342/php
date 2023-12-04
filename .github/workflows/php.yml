@@ -1,4 +1,4 @@
-name: Deploy-VM
+name: Deploy PHP-app-VM
 on:
   push:
     branches:
