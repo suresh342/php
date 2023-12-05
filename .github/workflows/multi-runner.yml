@@ -51,18 +51,33 @@ jobs:
          name: php-app
          path: release.zip
 
-  deploy:
-    runs-on: 
-      - self-hosted
-      - php-runner
+#jobs:
+  deploy_target:
+    runs-on: self-hosted
     needs: build
     steps:
       - name: Unzip Files
         run: unzip -o release.zip
-      - name: Move file        
-        run: |
-         sudo rm -r /home/suresh.velpula/target/php/*
-         sudo mv /home/suresh.velpula/_work/php/* /home/suresh.velpula/target
-         sudo mv /home/suresh.velpula/_work/php/* /home/suresh.velpula/prod
+      - name: Remove contents of target/php
+        run: sudo rm -r /home/suresh.velpula/target/php/*
+      - name: Move files to target directory
+        run: sudo mv /home/suresh.velpula/_work/php/* /home/suresh.velpula/target/
+
+  deploy_prod:
+    runs-on: php-runner
+    needs: build
+    steps:
+      - name: Unzip Files
+        run: unzip -o release.zip
+      - name: Remove contents of prod
+        run: sudo rm -r /home/suresh.velpula/prod/*
+      - name: Move files to prod directory
+        run: sudo mv /home/suresh.velpula/_work/* /home/suresh.velpula/prod
+      #- name: Move file        
+        #run: |
+         #sudo rm -r /home/suresh.velpula/target/php/*
+         #sudo mv /home/suresh.velpula/_work/php/* /home/suresh.velpula/target
+         #sudo mv /home/suresh.velpula/_work/php/* /home/suresh.velpula/actions-runner/prod
+	 
 
 	 
