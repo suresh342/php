@@ -57,14 +57,16 @@ jobs:
     runs-on: self-hosted
     needs: build
     steps: 
-      - name: Run SCP Action
-        uses: appleboy/scp-action@v0.1.4
-        
+
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
           name: php-app          
           path: release.zip
+          
+      - name: Move Files
+        run: |
+          ssh vmuser@20.197.22.105 'mv /_work/* /var/html/'
           
       - name: Install zip
         run: |
@@ -75,21 +77,4 @@ jobs:
       - name: unzip artifact for deployment
         run: unzip release.zip 
         
-      - name: 'Deploy to Azure VM'
-        #id: deploy-to-webapp       
-        #uses:  appleboy/ssh-action@master
-        #uses: easingthemes/ssh-deploy@main
-        uses: appleboy/scp-action@v0.1.4
-        
-        with:          
-          host : ${{secrets.HOST}}
-          username : ${{secrets.USER}}          
-          port : ${{secrets.PORT}}
-          password : ${{secrets.PASS}}          
-          source : ./
-          target: /var/www/html/Prod2
-          strip_components: 1
-          #script: whoami|
-           #whoami
-           #ls -al
-           #pwd
+
