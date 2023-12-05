@@ -59,7 +59,7 @@ jobs:
       - name: Unzip Files
         run: unzip -o release.zip
       - name: Remove contents of target/php
-        run: sudo rm -r /home/suresh.velpula/target/php/*
+        run: sudo rm -r /home/suresh.velpula/target/*
       - name: Move files to target directory
         run: sudo mv /home/suresh.velpula/_work/php/* /home/suresh.velpula/target/
 
