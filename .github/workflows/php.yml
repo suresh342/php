@@ -64,8 +64,9 @@ jobs:
         run: unzip -o release.zip
       - name: Move file        
         run: |
-         sudo mv //home/suresh.velpula/_work/php/ /home/suresh.velpula/target/php        
-
+         sudo rm -r /home/suresh.velpula/target/php/*
+         sudo mv /home/suresh.velpula/_work/php/* /home/suresh.velpula/target/
+         
    
         
 
