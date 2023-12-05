@@ -5,7 +5,10 @@ on:
       - main
 jobs:
   build:
-    runs-on: [self-hosted, php-runner]
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        runner: [self-hosted, php-runner]
     steps:   
       - name: Setup PHP        
         uses: actions/checkout@v2
