@@ -67,7 +67,7 @@ jobs:
     steps: 
       - name: Move contents to target directory
         run: |
-          sudo mv /home/suresh.velpula/_work /home/suresh.velpula/target
+          sudo mv /home/suresh.velpula/_work /home/suresh.velpula/target/
     
   deploy2:
     runs-on: self-hosted2   
