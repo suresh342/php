@@ -9,7 +9,7 @@ jobs:
     runs-on: self-hosted
     strategy:
       matrix:
-        runner: [self-hosted, php-runner]
+        runner: [self-hosted1, self-hosted2]
     steps:   
       - name: Checkout code        
         uses: actions/checkout@v2
@@ -62,7 +62,7 @@ jobs:
           path: release.zip
           
   deploy1:
-    runs-on: self-hosted   
+    runs-on: self-hosted1   
     needs: build
     steps: 
       - name: Move contents to target directory
@@ -70,7 +70,7 @@ jobs:
           sudo mv /home/suresh.velpula/_work /home/suresh.velpula/target
     
   deploy2:
-    runs-on: php-runner   
+    runs-on: self-hosted2   
     needs: build
     steps: 
       - name: Move contents to target directory
