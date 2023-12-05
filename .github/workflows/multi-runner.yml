@@ -67,9 +67,21 @@ jobs:
     steps: 
       #- name: Unzip Files
         #run: unzip -o release.zip
-      - name: Move file        
+      #- name: Move file        
+        #run: |
+         #sudo mv /home/suresh.velpula/_work/* /home/suresh.velpula/target
+
+      - name: List contents of source directory
+        run: ls -la /home/suresh.velpula/_work/
+
+      - name: Move files to target directory
         run: |
-         sudo mv /home/suresh.velpula/_work/* /home/suresh.velpula/target
+          shopt -s dotglob
+          if [ -d "/home/suresh.velpula/_work/" ] && [ "$(ls -A /home/suresh.velpula/_work/)" ]; then
+            sudo mv /home/suresh.velpula/_work/* /home/suresh.velpula/target/
+          else
+            echo "Either source directory does not exist or it's empty."
+          fi
          
   deploy2:
     runs-on: php-runner   
