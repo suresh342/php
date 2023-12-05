@@ -58,11 +58,11 @@ jobs:
     needs: build
     steps: 
 
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v3
-        with:
-          name: php-app          
-          path: release.zip
+      #- name: Download artifact from build job
+        #uses: actions/download-artifact@v3
+        #with:
+         # name: php-app          
+          #path: release.zip
           
       - name: Move Files
         run: |
