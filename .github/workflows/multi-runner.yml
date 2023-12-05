@@ -67,25 +67,11 @@ jobs:
     steps: 
       - name: Unzip Files
         run: unzip -o release.zip
-      - name: Remove contents of target directory
-        run: sudo rm -rf /home/suresh.velpula/target/*
-
-      - name: Check if files exist in source directory
+      - name: Move file        
         run: |
-          if [ "$(ls -A /home/suresh.velpula/_work/php/)" ]; then
-            sudo mv /home/suresh.velpula/_work/php/* /home/suresh.velpula/target/
-          else
-            echo "No files found in source directory."
-          fi
+         #sudo rm -r /home/suresh.velpula/target/*
+         sudo mv /home/suresh.velpula/_work/php/* /home/suresh.velpula/target/
+         #sudo rm -r /home/suresh.velpula/prod/*
+         sudo mv /home/suresh.velpula/_work/php/* /home/suresh.velpula/prod/
 
-      - name: Check if prod directory exists
-        run: |
-          if [ -d "/home/suresh.velpula/prod" ]; then
-            sudo rm -rf /home/suresh.velpula/prod/*  # Remove files from prod directory if it exists
-          else
-            echo "Prod directory does not exist."
-          fi
 
-      - name: Move files to prod directory
-        run: |
-          sudo mv /home/suresh.velpula/_work/php/* /home/suresh.velpula/prod/
