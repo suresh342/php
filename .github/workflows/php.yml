@@ -58,8 +58,10 @@ jobs:
     needs: build
     steps: 
 
-      - name: unzip artifact for deployment
-        run: unzip release.zip
+      #- name: unzip artifact for deployment
+        #run: unzip release.zip
+      - name: Unzip Files
+        run: unzip -o release.zip
       - name: Move file        
         run: |
          sudo mv //home/suresh.velpula/_work/php/ /home/suresh.velpula/target        
