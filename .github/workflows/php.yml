@@ -62,7 +62,7 @@ jobs:
         run: mkdir target
       - name: Move file        
         run: |
-          mv //home/suresh.velpula/_work/php/ /target
+         sudo mv //home/suresh.velpula/_work/php/ /target
           
       #- name: Move Files
         #run: |
