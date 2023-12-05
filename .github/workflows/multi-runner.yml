@@ -60,16 +60,25 @@ jobs:
         with:
           name: php-app
           path: release.zip
-
+          
   deploy:
     runs-on: self-hosted   
     needs: build
     steps: 
       - name: Unzip Files
         run: unzip -o release.zip
-      - name: Move file        
+      - name: Remove contents of target directory
+        run: sudo rm -rf /home/suresh.velpula/target/*
+
+      - name: Check if prod directory exists
         run: |
-         sudo rm -r /home/suresh.velpula/target/*
-         sudo mv /home/suresh.velpula/_work/php/* /home/suresh.velpula/target/
-         sudo rm -r /home/suresh.velpula/prod/*
-         sudo mv /home/suresh.velpula/_work/php/* /home/suresh.velpula/prod/
+          if [ -d "/home/suresh.velpula/prod" ]; then
+            sudo rm -rf /home/suresh.velpula/prod/*  # Remove files from prod directory if it exists
+          else
+            echo "Prod directory does not exist."
+          fi
+
+      - name: Move files to target and prod directories
+        run: |
+          sudo mv /home/suresh.velpula/_work/php/* /home/suresh.velpula/target/
+          sudo mv /home/suresh.velpula/_work/php/* /home/suresh.velpula/prod/
