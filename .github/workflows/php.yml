@@ -58,23 +58,23 @@ jobs:
     needs: build
     steps: 
 
-      #- name: Download artifact from build job
-        #uses: actions/download-artifact@v3
-        #with:
-         # name: php-app          
-          #path: release.zip
-          
-      - name: Move Files
+      - name: Create Directory
+        run: mkdir target
+      - name: Move file        
         run: |
-          ssh vmuser@20.197.22.105 'mv /_work/* /var/html/'
+          mv /_work /target
           
-      - name: Install zip
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y zip
-      - name: Zip files
-        run: zip -r release.zip ./*
-      - name: unzip artifact for deployment
-        run: unzip release.zip 
+      #- name: Move Files
+        #run: |
+          #ssh vmuser@20.197.22.105 'mv /_work/* /var/html/'
+          
+      #- name: Install zip
+        #run: |
+          #sudo apt-get update
+          #sudo apt-get install -y zip
+      #- name: Zip files
+        #run: zip -r release.zip ./*
+      #- name: unzip artifact for deployment
+        #run: unzip release.zip 
         
 
