@@ -65,16 +65,24 @@ jobs:
     runs-on: self-hosted   
     needs: build
     steps: 
-      - name: Move file        
+      - name: List contents of source directory
+        run: ls -la /home/suresh.velpula/_work/
+
+      - name: Move contents to target directory
         run: |
-         sudo mv //home/suresh.velpula/_work/* /home/suresh.velpula/target
+          shopt -s dotglob
+          sudo mv /home/suresh.velpula/_work/*/* /home/suresh.velpula/target/
     
   deploy2:
     runs-on: php-runner   
     needs: build
     steps: 
-      - name: Move file        
+      - name: List contents of source directory
+        run: ls -la /home/suresh.velpula/_work/
+
+      - name: Move contents to target directory
         run: |
-         sudo mv //home/suresh.velpula/_work/* /home/suresh.velpula/prod
+          shopt -s dotglob
+          sudo mv /home/suresh.velpula/_work/*/* /home/suresh.velpula/prod/
 
 
